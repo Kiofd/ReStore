@@ -1,0 +1,6 @@
+@Re_Store_HostAddress = http://localhost:500
+
+GET {{Re_Store_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
