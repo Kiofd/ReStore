@@ -1,23 +1,27 @@
 ﻿import axios, {AxiosError, AxiosResponse} from "axios";
 import {toast} from "react-toastify";
-import { router } from "../router/Routes";
+import {router} from "../router/Routes";
 
-axios.defaults.baseURL = 'http://localhost:5000/api/'
 
 //const sleep =() => new Promise(resolve => setTimeout(resolve, 1000)) // I don`t understad why i need a delay???
+
+axios.defaults.baseURL = 'http://localhost:5000/api/';
+axios.defaults.withCredentials = true;
+
+
 const responseBody = (response: AxiosResponse) => response.data;
 
-axios.interceptors.response.use( async response => {
-   // await sleep();
+axios.interceptors.response.use(async response => {
+    //await sleep();
     return response
 }, (error: AxiosError) => {
-    const  {data, status} = error.response as AxiosResponse;
-    switch (status){
+    const {data, status} = error.response as AxiosResponse;
+    switch (status) {
         case 400:
-            if (data.errors){
+            if (data.errors) {
                 const modelStateErrors: string[] = [];
-                for (const key in data.errors){
-                    if (data.errors[key]){
+                for (const key in data.errors) {
+                    if (data.errors[key]) {
                         modelStateErrors.push(data.errors[key])
                     }
                 }
@@ -37,7 +41,7 @@ axios.interceptors.response.use( async response => {
         default:
             break;
     }
-    
+
     return Promise.reject(error.response);
 })
 
@@ -61,9 +65,16 @@ const TestErrors = {
     getValidationError: () => request.get('buggy/validation-error')
 }
 
+const Basket = {
+    get: () => request.get('basket'),
+    addItem: (productId: number, quantity = 1) => request.post(`basket?productId=${productId}&quantity=${quantity}`, {}),
+    removeItem: (productId: number, quantity = 1) => request.delete(`basket?productId=${productId}&quantity=${quantity}`),
+}
+
 const agent = {
     Catalog,
-    TestErrors
+    TestErrors,
+    Basket
 }
 
 export default agent;
