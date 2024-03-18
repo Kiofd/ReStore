@@ -71,7 +71,6 @@ export const basketSlice = createSlice({
             state.status = 'idel';
             console.log(action.payload)
         });
-
     })
 })
 

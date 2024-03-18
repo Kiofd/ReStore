@@ -1,9 +1,10 @@
 ﻿import axios, {AxiosError, AxiosResponse} from "axios";
 import {toast} from "react-toastify";
 import {router} from "../router/Routes";
+import { PaginatedResponse } from "../models/pagination";
 
 
-//const sleep =() => new Promise(resolve => setTimeout(resolve, 1000)) // I don`t understad why i need a delay???
+const sleep = () => new Promise(resolve => setTimeout(resolve, 1000)) // I don`t understad why i need a delay???
 
 axios.defaults.baseURL = 'http://localhost:5000/api/';
 axios.defaults.withCredentials = true;
@@ -12,7 +13,14 @@ axios.defaults.withCredentials = true;
 const responseBody = (response: AxiosResponse) => response.data;
 
 axios.interceptors.response.use(async response => {
-    //await sleep();
+    await sleep();
+    const pagination = response.headers['pagination'];
+
+    if (pagination) {
+        response.data = new PaginatedResponse(response.data, JSON.parse(pagination))
+        console.log(response)
+        return response;
+    }
     return response
 }, (error: AxiosError) => {
     const {data, status} = error.response as AxiosResponse;
@@ -46,15 +54,16 @@ axios.interceptors.response.use(async response => {
 })
 
 const request = {
-    get: (url: string) => axios.get(url).then(responseBody),
+    get: (url: string, params?: URLSearchParams) => axios.get(url, {params}).then(responseBody),
     post: (url: string, body: object) => axios.post(url, body).then(responseBody),
     put: (url: string, body: object) => axios.put(url, body).then(responseBody),
     delete: (url: string) => axios.delete(url).then(responseBody),
 }
 
 const Catalog = {
-    list: () => request.get('products'),
-    details: (id: number) => request.get(`products/${id}`)
+    list: (params: URLSearchParams) => request.get('products', params),
+    details: (id: number) => request.get(`products/${id}`),
+    fetchFilters: () => request.get('products/filters')
 }
 
 const TestErrors = {

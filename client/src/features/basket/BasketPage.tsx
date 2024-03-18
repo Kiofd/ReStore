@@ -72,7 +72,7 @@ export default function BasketPage() {
                                     <LoadingButton
                                         loading={status === 'pendingRemoveItem' + item.productId + 'del'}
                                         onClick={() => dispatch(removeBasketItemAsync(
-                                            {productId: item.productId, quantity: 1, name: 'del'}))}
+                                            {productId: item.productId, quantity: item.quantity, name: 'del'}))}
                                         color='error'>
                                         <Delete/>
                                     </LoadingButton>
