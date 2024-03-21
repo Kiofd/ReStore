@@ -13,7 +13,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<StoreContext>(o =>
 {
     o.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+}); 
+
 builder.Services.AddCors();
 
 var app = builder.Build();
